@@ -17,8 +17,6 @@ config.window_padding = {
     bottom = 12,
 }
 
-config.default_domain = 'WSL:Ubuntu'
-
 config.enable_tab_bar = false
 
 return config
