@@ -1,5 +1,8 @@
 return {
     "m4xshen/autoclose.nvim",
-    event = "VeryLazy",
-    opts = {},
+    opts = {
+        keys = {
+            ["$"] = { escape = true, close = true, pair = "$$", enabled_filetypes = { "tex" } },
+        },
+    },
 }
