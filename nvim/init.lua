@@ -2,7 +2,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.numberwidth = 4
 
--- vim.opt.cursorline = true
+vim.opt.cursorline = true
 vim.opt.signcolumn = "yes"
 
 vim.opt.laststatus = 3
@@ -19,10 +19,14 @@ vim.opt.smartcase = true
 vim.opt.hlsearch = false
 vim.opt.inccommand = "split"
 
-vim.opt.whichwrap:append "<>[]hl"
-
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+vim.opt.whichwrap:append "<>[]hl"
+vim.keymap.set("n", "j", "gj")
+vim.keymap.set("n", "k", "gk")
+vim.opt.wrap = true
+vim.opt.linebreak = true
 
 vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>W", ":wq<CR>")
