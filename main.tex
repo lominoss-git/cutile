@@ -1,0 +1,440 @@
+\documentclass[french, 12pt]{article}
+\usepackage[a4paper, left=1.5cm, top=2cm, right=1.5cm, bottom=2cm]{geometry}
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{N}[1]{>{\arraybackslash}m{#1}}
+
+\usepackage{tikz}
+\usepackage[siunitx, straightvoltages]{circuitikz}
+\usetikzlibrary{babel, positioning}
+
+\newcommand{\mymeter}[3] {  % #1 = name , #2 = rotation angle, #3 = letter
+	\begin{scope}[transform shape,rotate=#2]
+		\draw[thick] (#1)node(){$\mathbf #3$} circle (11pt);
+		\draw[rotate=45,-latex] (#1)  +(-17pt,0) --+(17pt,0);
+	\end{scope}
+}
+
+\usepackage{float}
+
+\renewcommand{\thesection}{\Roman{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\roman{subsubsection}.}
+
+\usepackage{xcolor}
+\usepackage{sectsty}
+
+\definecolor{purple}{HTML}{8e7cc3}
+\definecolor{red}{HTML}{cc0000}
+\definecolor{green}{HTML}{6aa84f}
+\definecolor{blue}{HTML}{3d85c6}
+
+\sectionfont{\color{red}}
+\subsectionfont{\color{green}}
+\subsubsectionfont{\color{blue}}
+
+\title{\color{purple} \textbf{TP 1 : ÉTUDE D'UN TRANSFORMATEUR}}
+\author{Assaad EL OUALJI, Anass ES-SAGHIR et Mohamed EL BOUAICHI}
+\date{A412}
+
+\begin{document}
+
+\maketitle
+
+\section{Notion de base}
+
+\subsection{Principe de fonctionnement d’un transformateur}
+
+\subsubsection{Induction électromagnétique}
+
+Lorsqu’un courant alternatif $\left(AC\right)$ circule dans la bobine primaire, il crée un champ magnétique variable. Ce champ magnétique se propage à travers le noyau magnétique (généralement en fer doux) jusqu’à la bobine secondaire.
+
+\subsubsection{Tension induite}
+
+Ce champ magnétique variable induit une tension dans la bobine secondaire. La tension induite dépend du rapport du nombre de spires entre les deux bobines.
+
+\subsubsection{Circuit représentatif et formule fondamentale}
+
+\begin{figure}[H]
+	\centering
+	\begin{circuitikz}
+		\draw
+			(0,0) node [transformer core](t) {}
+			(t.base) node{$\Phi$}
+			(t.A1) to [short, -o] ++(-3,0)
+			(t.A2) to [short, -o] ++(-3,0)
+			(t.B1) to [short, -o] ++(3,0)
+			(t.B2) to [short, -o] ++(3,0)
+			(t.A2) to [open, v^=$U_1$] (t.A1)
+			(t.B2) to [open, v=$U_2$] (t.B1)
+		;
+	\end{circuitikz}
+	\caption{Circuit canalisant le flux magnétique}
+\end{figure}
+
+$$ m = \frac{U_2}{U_1} = \frac{N_2}{N_1} $$
+
+\begin{itemize}
+	\item \textbf{$U_1$}: tension efficace au primaire,
+	\item \textbf{$U_2$}: tension efficace au secondaire,
+	\item \textbf{$N_1$}: nombre de spires au primaire,
+	\item \textbf{$N_2$}: nombre de spires au secondaire.
+\end{itemize}
+
+\subsubsection{Les éléments principaux d’un transformateur}
+
+\begin{enumerate}
+	\item \textbf{Bobine primaire} : reçoit la tension d’entrée,
+	\item \textbf{bobine secondaire} : fournit la tension de sortie,
+	\item \textbf{noyau magnétique} : guide le flux magnétique entre les bobines.
+\end{enumerate}
+
+\subsubsection{Types de transformateurs selon le rapport de spires}
+
+\begin{itemize}
+	\item \textbf{Abaisseur} : $ N_S < N_P \Longrightarrow m < 1 \Longrightarrow \text{diminue la tension} $,
+	\item \textbf{élévateur} : $ N_S > N_P \Longrightarrow m > 1 \Longrightarrow \text{augmente la tension} $.
+\end{itemize}
+
+\subsubsection{Bilan énergétique}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[
+			BOX/.style={rectangle, draw=purple!60, fill=purple!5, text=purple, very thick, minimum width=2.6cm, minimum height=1.5cm},
+		]
+		\node[BOX, label=below:{\small Pertes joule au primaire $ P_{j1} $}] (b1) {Primaire};
+		\node[BOX, label=below:{\small Pertes joule au secondaire $ P_{j2} $}] (b2) [right of=b1, node distance=210pt] {Secondaire};
+		\draw[<-] (b1.west) to node[above] {\footnotesize Puissance absorbée} node[below] {\footnotesize $ P_1 = U_1 I_1 \cos({\varphi}_1) $} ++(-3.4,0);
+		\draw[->, dashed] (b1.east) to node[above] {\footnotesize Puissance magnétique} node[below] {\footnotesize Pertes ferromagnétiques $P_f$} (b2.west);
+		\draw[->] (b2.east) to node[above] {\footnotesize Puissance utile} node[below] {\footnotesize $ P_2 = U_2 I_2 \cos({\varphi}_2) $} ++(3.4,0);
+	\end{tikzpicture}
+	\caption{Flux énergétique au sein du transformateur}
+\end{figure}
+
+On admet donc que, d’après le bilan énergétique du transformateur réel :
+
+$$ P_1 = P_{j1} + P_f + P_{j2} + P_2 $$
+
+\section{Manipulation}
+
+\subsection{Loi des tensions}
+
+Réalisons le montage suivant :
+
+\begin{figure}[H]
+	\centering
+	\begin{circuitikz}
+		\draw
+			(0,0) to [short] (5,0)
+			to [L, l_=$N_1$] (5,-2.5)
+			to [short] (0,-2.5)
+			to [vsourcesin, l=$6\ \si{V}$] (0,0)
+			(2,0) to [voltmeter, color=white, name=V1] (2,-2.5)
+			(2.6,-2.5) to [open, v=$U_1$] (2.6,0)
+			(6,0) to [short] (8,0)
+			to [voltmeter, color=white, name=V2] (8,-2.5)
+			to [short] (6,-2.5)
+			to [L, l_=$N_2$] (6,0)
+			(8.6,-2.5) to [open, v=$U_2$] (8.6,0)
+		;
+		\mymeter{V1}{0}{V}
+		\mymeter{V2}{0}{V}
+	\end{circuitikz}
+	\caption{Circuit de la 1ère expérience}
+\end{figure}
+
+\subsubsection{But et principe}
+
+On procède à la vérification de la loi des tensions dans un transformateur dont le secondaire est en circuit ouvert. Le primaire est alimenté par une tension alternative sinusoïdale de valeur efficace $U_1 = 6 \si{V}$. Les tensions efficaces aux bornes du primaire et du secondaire, respectivement $U_1$ et $U_2$, sont mesurées à l’aide de voltmètres.
+
+\subsubsection{Utilisation en abaisseur de tension}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | M{1cm} | M{1cm} | M{2cm} | M{2cm} | M{2cm} | }
+		\hline
+		$N_1$ & $N_2$ & $U_1\ \left(\si{V}\right)$ & $U_2\ \left(\si{V}\right)$ & $U_2/U_1$ \\
+		\hline
+		140 & 70 & \color{purple} \textbf{5,800} & \color{purple} \textbf{2,910} & \color{purple} \textbf{0,502} \\
+		\hline
+		140 & 42 & \color{purple} \textbf{5,800} & \color{purple} \textbf{1,760} & \color{purple} \textbf{0,303} \\
+		\hline
+		140 & 28 & \color{purple} \textbf{5,800} & \color{purple} \textbf{1,190} & \color{purple} \textbf{0,205} \\
+		\hline
+	\end{tabular}
+	\hspace{0.5cm}
+	\begin{tabular}{ | M{1.5cm} | }
+		\hline
+		$N_2/N_1$ \\
+		\hline
+		0,5 \\
+		\hline
+		0,3 \\
+		\hline
+		0,2 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Les mesures effectuées confirment la loi des tensions pour un transformateur idéal en régime sinusoïdal et à vide. En effet, le rapport des tensions efficaces mesurées aux bornes du secondaire et du primaire $U_2/U_1$ est proche du rapport du nombre de spires $N_2/N_1$.\\
+
+Dans le cas présenté, avec $N_1 = 140$ et $N_2 = 70$, le rapport théorique attendu est :
+
+$$ \frac{N_2}{N_1} = \frac{70}{140} = 0,5 $$
+
+Les valeurs mesurées de $U_2/U_1\ \left(0,502\ ;\ 0,303\ ;\ 0,205\right)$ sont cohérentes avec ce rapport lorsque la tension secondaire diminue (probablement en raison de modifications du couplage ou d'autres paramètres expérimentaux). Cela illustre que le transformateur fonctionne en mode abaisseur de tension, conformément à la théorie.\\
+
+Les légères différences entre les valeurs théoriques et mesurées peuvent s'expliquer par :
+
+\begin{itemize}
+	\item des pertes dans le circuit magnétique (hystérésis, courants de Foucault),
+	\item une régulation imparfaite de la tension d’entrée.
+\end{itemize}
+
+\subsubsection{Utilisation en élévateur de tension}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | M{1cm} | M{1cm} | M{2cm} | M{2cm} | M{2cm} | }
+		\hline
+		$N_1$ & $N_2$ & $U_1 \left(\si{V}\right)$ & $U_2 \left(\si{V}\right)$ & $U_2/U_1$ \\
+		\hline
+		70 & 140 & \color{purple} \textbf{5,800} & \color{purple} \textbf{11,750} & \color{purple} \textbf{2,026} \\
+		\hline
+		42 & 140 & \color{purple} \textbf{5,800} & \color{purple} \textbf{18,700} & \color{purple} \textbf{3,224} \\
+		\hline
+		28 & 140 & \color{purple} \textbf{5,800} & \color{purple} \textbf{24,600} & \color{purple} \textbf{4,241} \\
+		\hline
+	\end{tabular}
+	\hspace{0.5cm}
+	\begin{tabular}{ | M{1.5cm} | }
+		\hline
+		$N_2/N_1$ \\
+		\hline
+		2 \\
+		\hline
+		3.333 \\
+		\hline
+		5 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Dans cette seconde configuration, on inverse les rôles des enroulements : le primaire comporte moins de spires que le secondaire $\left(N_1<N_2\right)$, ce qui permet d’élever la tension.\\
+
+Le tableau des mesures montre que le rapport $U_2/U_1$ augmente avec le rapport $N_2/N_1$. Par exemple :
+
+\begin{itemize}
+	\item pour $N_1 = 70$ et $N_2 = 140$, $\frac{U_2}{U_1} = 2,026$,
+	\item pour $N_1 = 28$ et $N_2 = 140$, $\frac{U_2}{U_1} = 4,241$.
+\end{itemize}
+
+\
+
+Ce comportement est conforme à la loi du transformateur idéal :
+
+$$ \frac{U_2}{U_1} \approx \frac{N_2}{N_1} $$
+
+Ainsi, le transformateur fonctionne correctement en élévateur de tension. Les écarts mineurs entre valeurs mesurées et théoriques sont analogues à ceux observés en mode abaisseur : pertes magnétiques, couplage imparfait, effets capacitatifs ou résistifs dans les enroulements.
+
+\subsection{Puissance consommée à vide}
+
+Réalisons le montage suivant :
+
+\begin{figure}[H]
+	\centering
+	\begin{circuitikz}
+		\draw
+			(0,0) to [ammeter, i=$I'$] (2,0)
+			to [ammeter, i=$I_{1.0}$] (5,0)
+			to [L, l_=$N_1$] (5,-2.5)
+			to [short] (0,-2.5)
+			to [vsourcesin, l=$6\ \si{V}$] (0,0)
+			(2,0) to [voltmeter, color=white, name=V1] (2,-2.5)
+			(2.6,-2.5) to [open, v=$U_1$] (2.6,0)
+			(6,0) to [short, -o, i={$I_2=0\ \si{A}$}] (8,0)
+			(8,-2.5) to [short, o-] (6,-2.5)
+			to [L, l_=$N_2$] (6,0)
+		;
+		\mymeter{V1}{0}{V}
+	\end{circuitikz}
+	\caption{Circuit de la 2ème expérience}
+\end{figure}
+
+\subsubsection{Étude des pertes à vide dans un transformateur}
+
+Lorsqu’un transformateur fonctionne, des pertes d’énergie apparaissent, notamment :
+
+\begin{itemize}
+	\item par effet Joule dans les enroulements (résistances du primaire et du secondaire),
+	\item dans le fer (pertes par hystérésis et courants de Foucault).
+\end{itemize}
+
+\
+
+À vide (secondaire ouvert), le courant au secondaire est nul $\left( I_2 = 0 \right)$, donc toute l’énergie absorbée par le primaire compense uniquement ces pertes. Les grandeurs mesurées à vide permettent donc d’évaluer les pertes en fer et les pertes Joule dans le primaire.
+
+\subsubsection{Puissance absorbée à vide}
+
+$$ P_{1.0} = U_1 I_{1.0} \cos(\varphi) $$
+
+avec :
+
+\begin{itemize}
+	\item $U_1$ : tension au primaire,
+	\item $I_{1.0}$ : courant à vide au primaire,
+	\item $\varphi$ : déphasage entre $U_1$ et $I_{1.0}$.
+\end{itemize}
+
+\subsubsection{Bilan de puissance à vide}
+
+D'après le bilan énergétique :
+
+$$ P_{1.0} = P_{j1.0} + P_f \qquad \left( \text{Car :}\ I_2 = 0 \si{A} \Longrightarrow P_{j2} = 0 \si{W}\ \text{et}\ P_2 = 0 \si{W} \right) $$
+
+\begin{itemize}
+	\item $P_{j1.0} = R_1 I_{1.0}^2$ : pertes Joule dans le primaire,
+	\item $P_f$ : pertes dans le fer, déduites par :
+		$$ P_f = P_{1.0} - R_1 I_{1.0}^2 $$
+\end{itemize}
+
+\subsubsection{Détermination du déphasage $\varphi$}
+
+Il peut être obtenu :
+
+\begin{itemize}
+	\item soit graphiquement (diagramme de Fresnel),
+	\item soit par la formule :
+		$$ \cos(\varphi) = \frac{I'^2 - I_{1.0}^2 - I''^2}{2 I'' I_{1.0}} $$
+\end{itemize}
+
+où $I'' = \frac{U_1}{R_v}$ (résistance interne du voltmètre ferromagnétique).
+
+\subsubsection{Résultats expérimentaux}
+
+On donne $R_v = 120\ \si{\ohm}$ et $R_1 = 0,2\ \si{\ohm}$.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | M{1.7cm} | M{1.7cm} | M{1.5cm} | M{1.7cm} | M{1.2cm} | M{1.8cm} | M{2cm} | M{1.7cm} | }
+		\hline
+		$I' \left( \si{mA} \right)$ & $I_{1.0} \left( \si{mA} \right)$ & $U_1 \left( \si{V} \right)$ & $I'' \left( \si{mA} \right)$ & $\cos(\varphi)$ & $P_{1.0} \left( \si{mW} \right)$ & $P_{j1.0} \left( \si{mW} \right)$ & $P_f \left( \si{mW} \right)$ \\
+		\hline
+		\color{purple} \textbf{404} & \color{purple} \textbf{386} & \color{purple} \textbf{5,950} & \color{purple} \textbf{49,583} & \color{purple} \textbf{0,307} & \color{purple} \textbf{705,087} & \color{purple} \textbf{29,799} & \color{purple} \textbf{675,288} \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsubsection{Conclusion}
+
+L’analyse des résultats expérimentaux permet de quantifier précisément les différentes pertes dans le transformateur lorsque le secondaire est ouvert (fonctionnement à vide). \\
+
+On observe que :
+
+\begin{itemize}
+	\item La puissance totale absorbée à vide est $P_{1.0} = 705,087\ \si{mW}$,
+	\item les pertes par effet Joule dans l’enroulement primaire sont faibles : $P_{j1.0} = 29,799\ \si{mW}$, soit seulement $4,2$ \% de la puissance absorbée,
+	\item la majeure partie de l’énergie est dissipée dans le circuit magnétique du fer : $P_f = 675,288\ \si{mW}$, soit environ $95,8$ \% des pertes.
+\end{itemize}
+
+\
+
+Cela confirme que les pertes à vide sont dominées par les pertes dans le fer (hystérésis et courants de Foucault), ce qui est typique d’un fonctionnement à vide, le courant étant alors essentiellement magnétisant.
+
+Le facteur de puissance très faible $\left( \cos(\varphi) = 0,307 \right)$ reflète cette prédominance du caractère inductif du transformateur à vide, et illustre le fort déphasage entre tension et courant.
+
+\subsection{Rendement du transformateur}
+
+Réalisons le montage suivant :
+
+\begin{figure}[H]
+	\centering
+	\begin{circuitikz}
+		\draw
+			(0,0) to [ammeter, i=$I_1$] (3,0)
+			to [L, l_=$N_1$] (3,-2.5)
+			to [short] (0,-2.5)
+			to [vsourcesin, l=$6\ \si{V}$] (0,0)
+			(4,0) to [short] (6,0)
+			to [voltmeter, color=white, name=V1] (6,-2.5)
+			to [short] (4,-2.5)
+			to [L, l_=$N_2$] (4,0)
+			(6.6,-2.5) to [open, v=$U_2$] (6.6,0)
+			(6,0) to [ammeter, i=$I_2$] (9,0)
+			to [vR, l=Rhéostat] (9,-2.5)
+			to [short] (6,-2.5)
+		;
+		\mymeter{V1}{0}{V}
+	\end{circuitikz}
+	\caption{Circuit de la 3ème expérience}
+\end{figure}
+
+\subsubsection{Différence entre ce circuit est celui qui précede}
+
+Lorsque l’on ferme le circuit secondaire à l’aide d’un rhéostat, un courant $I_2$ circule alors dans l’enroulement secondaire et par conséquent le bilan énergétique prend la forme suivante :
+
+$$ P_1 = P_{j1} + P_f + P_{j2} + P_2 $$
+
+où :
+
+\begin{itemize}
+	\item $P_1 = U_1 I_1 \cos(\varphi)$ : puissance active absorbée au primaire,
+	\item $P_2 = U_2 I_2 \cos(\varphi_{2}) = U_2 I_2$ : puissance active utile délivrée à la charge,
+	\item $P_{j1} = R_1 I_1^2 $ : pertes Joule dans l’enroulement primaire,
+	\item $P_{j2} = R_2 I_2^2 $ : pertes Joule dans l’enroulement secondaire,
+	\item $P_f$ : pertes dans le fer (constantes, liées à l’hystérésis et aux courants de Foucault).
+\end{itemize}
+
+\subsubsection{Résultats expérimentaux}
+
+On prend $R_1 = 0,2\ \si{\ohm}$ et $R_2 = 0,1\ \si{\ohm}$. À l'aide du rhéostat, on fixe $I_2 = 400\ \si{mA}$.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | M{1.7cm} | M{1.7cm} | M{1.5cm} | M{1.7cm} | M{1.5cm} | M{1.8cm} | M{1cm} | }
+		\hline
+		$I_2 \left( \si{mA} \right)$ & $I_1 \left( \si{mA} \right)$ & $U_2 \left( \si{V} \right)$ & $P_2 \left( \si{mW} \right)$ & $P_j \left( \si{mW} \right)$ & $P_1 \left( \si{mW} \right)$ & $\eta$ \\
+		\hline
+		400 & \color{purple} \textbf{512} & \color{purple} \textbf{2,750} & \color{purple} \textbf{1100} & \color{purple} \textbf{68,429} & \color{purple} \textbf{1843,717} & \color{purple} \textbf{0,6} \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsubsection{Conclusion}
+
+Le fonctionnement d’un transformateur diffère selon qu’il est à vide ou en charge. À vide, le courant secondaire est nul, le courant primaire est très faible et sert uniquement à entretenir le champ magnétique, les pertes sont essentiellement celles dans le fer. En charge, un courant apparaît dans le secondaire, le courant primaire augmente, la puissance transmise à la charge devient significative, les pertes Joule dans les enroulements croissent, et le facteur de puissance s’améliore. Le tableau suivant résume ces différences :
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ | N{4.5cm} | N{6cm} | N{6cm} | }
+		\hline
+		Caractéristique & À vide (secondaire ouvert) & En charge (rhéostat connecté) \\
+		\hline
+		Courant secondaire $I_2$ & Nul (aucun courant ne circule dans le secondaire) & Présent (dépend de la valeur du rhéostat) \\
+		\hline
+		Courant primaire $I_1$ & Très faible (appelé courant à vide, principalement inductif) & Plus élevé (comprend le courant à vide + courant nécessaire pour fournir $P_2$) \\
+		\hline
+		Pertes Joule & Très faibles (seulement dans le primaire, car $I_1$ est faible) & Élevées (dans les deux enroulements, proportionnelles à $I_1^2$ et $I_2^2$) \\
+		\hline
+		Pertes dans le fer $P_f$ & Présentes (provoquées par le champ magnétique alternatif dans le noyau) & Constantes (car liées à $U_1$ et à la fréquence, peu influencées par la charge) \\
+		\hline
+		Puissance transmise $P_2$ & Nulle (aucune charge connectée) & Non nulle (énergie transmise à la charge $R_2$) \\
+		\hline
+		Puissance absorbée $P_1$ & Très faible (juste suffisante pour compenser $P_j$ et $P_f$) & Plus élevée (compense les pertes et alimente la charge) \\
+		\hline
+		Facteur de puissance $\cos(\varphi)$ & Faible (courant fortement déphasé, inductif) & Meilleur (déphasage réduit, plus grande proportion de puissance active) \\
+		\hline
+		Rendement $\eta$ & Pratiquement nul (pas de puissance utile délivrée) & Plus élevé (une partie significative de la puissance absorbée est transférée au secondaire) \\
+		\hline
+		Utilité & Permet de mesurer les pertes à vide et de caractériser le noyau magnétique & Fonctionnement normal du transformateur, utile pour l'alimentation de charges électriques \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\end{document}
+
